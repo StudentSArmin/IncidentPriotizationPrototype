@@ -1,0 +1,61 @@
+{
+    "type": "NetworkGraph",
+    "protocol": "olsr",
+    "version": "0.6.6",
+    "revision": "5031a799fcbe17f61d57e387bc3806de",
+    "metric": "etx",
+    "router_id": "172.16.40.24",
+    "label": "Test Network",
+    "nodes": [
+        {
+            "id": "172.16.40.24",
+            "label": "HumiditySensor A1",
+            "properties": {
+                "hostname": "node1.my.net"
+            }
+        },
+        {
+            "id": "172.16.40.25",
+            "label": "TemperatureSensor A2",
+            "properties": {
+                "hostname": "node1.my.net"
+            }
+        },
+        {
+            "id": "172.16.40.60",
+            "label": "Camera_A1",
+            "properties": {
+                "hostname": "node2.my.net"
+            }
+        },
+        {
+            "id": "172.16.40.1",
+            "label": "Gateway Warehouse A",
+            "properties": {
+                "hostname": "node3.my.net"
+            }
+        }
+    ],
+    "links": [
+        {
+            "source": "172.16.40.24",
+            "target": "172.16.40.25",
+            "cost": 1.000
+        },
+        {
+            "source": "172.16.40.24",
+            "target": "172.16.40.60",
+            "cost": 1.000
+        },
+        {
+            "source": "172.16.40.24",
+            "target": "172.16.41.1",
+            "cost": 1.000
+        },
+        {
+            "source": "172.16.40.60",
+            "target": "172.16.41.1",
+            "cost": 1.000
+        }
+    ]
+}
