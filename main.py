@@ -133,7 +133,7 @@ def update_incident_list():
             max_incident = get_max_val_incident("Undefined")
 
             for incident in incidentList:
-                if incident.id == "max":
+                if incident.id == "---MAX---":
                     incidentList.remove(incident)
             if not max_incident in incidentList:
                 incidentList.append(max_incident)
@@ -151,7 +151,7 @@ def update_incident_list():
     text_list_all_incident.place(x=150, y=150)
 
     text_list_all_incident.insert(tkinter.END,
-                                  "Name:             |   Type:    | Impact Score | Propagation Score: | Recoverability Factor: | Score: |Normalized(0-100%)\n")
+                                  "Name:             |   Type:    | Impact Score | Recoverability Factor: | Propagation Score: | Score: |Normalized(0-100%)\n")
 
     max_value = 1
     for incident in incidentList:
@@ -268,7 +268,8 @@ def show_box_plot():
     values = []
 
     for incident in incidentList:
-        values.append(incident.score)
+        if incident.id != "---MAX---":
+            values.append(incident.score)
     # box_plot_data = (values)
     plot.boxplot(values, autorange=True)
 
@@ -365,21 +366,23 @@ def show_propagation_details(incident):
     count = 1
     text_space = ""
     for i in range(1, len(layer_list)):
-        text_space += "  "
-        header_text = "Prop. distance: " + str(count) + "                  "
-        header_text = header_text[0: 20] + str(incident.get_affected_impact_factors_labels())
-        text_incident_propagation_details.insert(tk.END, text_space + header_text +"\n")
-        for node_id in layer_list[i]:
-            for node in networkNodeList:
-                if node.id == node_id:
-                    if node_has_vulnerability(node_id, incident):
-                        text_incident_propagation_details.insert(tk.END, text_space + node.print_node_impact_factors_2(
-                            incident.get_affected_impact_factors()) + " vuln\n")
-                    else:
-                        text_incident_propagation_details.insert(tk.END, text_space + node.print_node_impact_factors_2(incident.get_affected_impact_factors())+ "\n")
+        if i < 3:
+            text_space += "  "
+            denominator = count*count
+            header_text = "Prop. distance: " + str(count) + "                  "
+            header_text = header_text[0: 20] + str(incident.get_affected_impact_factors_labels())
+            text_incident_propagation_details.insert(tk.END, text_space + header_text +"\n")
+            for node_id in layer_list[i]:
+                for node in networkNodeList:
+                    if node.id == node_id:
+                        if node_has_vulnerability(node_id, incident):
+                            text_incident_propagation_details.insert(tk.END, text_space + node.print_node_impact_factors_2(
+                                incident.get_affected_impact_factors()) + "x5 (vuln)\n")
+                        else:
+                            text_incident_propagation_details.insert(tk.END, text_space + node.print_node_impact_factors_2(incident.get_affected_impact_factors())+ "\n")
 
-        text_incident_propagation_details.insert(tk.END,"\n")
-        count += 1
+            text_incident_propagation_details.insert(tk.END,"\n")
+            count += 1
     text_incident_propagation_details['state'] = 'disabled'
 
 
@@ -539,39 +542,10 @@ def add_new_incident():
     root.mainloop()
 
 
-def add_incident_types():
-    root = tkinter.Toplevel()
-    root.geometry("500x700")
-    root['background'] = '#65788A'
-    label = tk.Label(root, text="Add new Incident Types ", foreground="white", bg='#3F4C50')
-    label.grid(row=0, column=0, sticky='w')
-
-
-    listbox_incident_types = tk.Listbox(root, selectmode='single', width=30, height=17)  # selectmode multiple
-    listbox_incident_types.grid(row=3, column=0)
-    IncidentClass.define_listbox_incident_types(listbox_incident_types)
-    label_incident_type_name = tk.Label(root, text="Define Incident Type name", foreground="white", bg='#3F4C50')
-    label_incident_type_name.grid(row=1, column=0, sticky='w')
-    text_incident_name= tk.Text(root, height=1, width=20, bg='#1D2325', fg='white')
-    text_incident_name.grid(row=1, column=1)
-
-
-#
-#
-#
-# var_activate_propagation_risk = tk.IntVar()
-# checkbox_activate_propagation_probability = tk.Checkbutton(tab_incident, text='Activate Propagation by Probability',variable=var_activate_propagation_risk, onvalue=1, offvalue=0, command=update_incident_list())
-# checkbox_activate_propagation_probability.place(x=250, y=350)
-
-
 
 listbox_incident.bind('<<ListboxSelect>>', incident_selected)
 ################################################################
 # Incident tab buttons
-button_edit_incident_types = tk.Button(tab_incident, text='Configure Incident Types', bg='#2e383b', fg='white', width=20,
-                                 command=add_incident_types)
-button_edit_incident_types.place(x=10, y=30)
-
 button_add_incident = tk.Button(tab_incident, text='add incident', bg='#2e383b', fg='white', height=1, width=12,
                                 command=add_new_incident)
 button_add_incident.place(x=10, y=155)

@@ -1,20 +1,24 @@
 import tkinter
 
 incident_types =  {
-        "Malware": [1, 1, 1, 1, 1],
+        "Jammer": [0, 1, 1, 0, 0],
         "DDoS": [0, 0, 1, 1, 0],
         "DoS": [0, 0, 1, 1, 0],
+        "Malware": [1, 1, 1, 1, 1],
         "PDoS": [0, 0, 1, 1, 0],
-        "Spyware": [1, 0, 0, 0, 0],
+        "SlowDoS": [0, 0, 1, 0, 0],
+        "Unauthorised data access": [1, 0, 0, 0, 0],
         "WirelessDoS": [0, 0, 1, 0, 0],
         "Undefined": [1, 1, 1, 1, 1]
     }
 
 incident_recoverability_factors = {
-        "Malware": 1.2,
-        "DDoS": 1.2,
-        "DoS": 0.8,
-        "Spyware": 1.2,
+        "Jammer": 1.0,
+        "Malware": 0.9,
+        "DDoS": 0.9,
+        "DoS": 1.0,
+        "SlowDoS": 1.1,
+        "Unauthorised data access": 1.1,
         "WirelessDoS": 1.0,
         "Undefined": 1.0
     }
@@ -56,9 +60,9 @@ class IncidentClass:
         # impact_score_aggr =  round(impact_score_aggr/ len(networkNodeList), 2) * 100
 
         impact_score_aggr = "                       " +str(round(impact_score_aggr,2 ))
-        impact_score_aggr = impact_score_aggr[-12:]
+        impact_score_aggr = impact_score_aggr[-13:]
 
-        propagation_score = "                        " +str(self.propagation_score)
+        propagation_score = "                        " +str(round(self.propagation_score/2,2))
         propagation_score = propagation_score[-20:]
 
 
@@ -67,7 +71,7 @@ class IncidentClass:
         score = score[-7:]
         score_normalized = round(self.score/max_value * 100, 2)
 
-        return f"" + name + "|"+ type  + "| "+ impact_score_aggr +" |"+ propagation_score +"| "+ recoverability_factor +"| "+ score + "|  "+ str(score_normalized) +"\n"
+        return f"" + name + "|"+ type  + "| "+ impact_score_aggr +"|"+ recoverability_factor +" |"+ propagation_score +"| "+ score + "|  "+ str(score_normalized) +"\n"
 
 
     def get_affected_impact_factors(self):
@@ -120,15 +124,16 @@ def define_listbox_incident_types(Listbox):
 def load_predefined_incidents():
     incidents = []
 
-    incidents.append(IncidentClass("BotenaGO", "Malware",  ["172.16.41.2"], ["t-1234", "SG3-1010"]))
-    incidents.append(IncidentClass("DDoS", "DDoS", ["172.16.40.2"], None))
+    incidents.append(IncidentClass("BotenaGO", "Malware",  ["172.16.41.2", "172.16.42.4"], ["t-1234", "SG3-1010"]))
+    #incidents.append(IncidentClass("DDoS", "DDoS", ["172.16.40.2"], None))
 
-    incidents.append(IncidentClass("MQTTDoS_Server", "DoS",  ["172.16.41.3"], None))
-    incidents.append(IncidentClass("CamerasSpyware", "Spyware",  ["172.16.42.3", "172.16.42.4"], None))
+    incidents.append(IncidentClass("SlowITe_MqttServer", "SlowDoS",  ["172.16.41.3"], None))
+    incidents.append(IncidentClass("CameraEspionage", "Unauthorised data access",  ["172.16.42.3", "172.16.42.4"], None))
     #incidents.append(IncidentClass("AGVRemoteControl", "Malware",  ["172.16.55.2", "172.16.55.3"], "2.5.0"))
-    incidents.append(IncidentClass("AGVRemoteControl", "Malware",  ["172.16.55.2"], "2.5.0"))
+    incidents.append(IncidentClass("AGVRemoteControl", "Malware",  ["172.16.55.2", "172.16.55.3"], "AGV2.5.0"))
+    incidents.append(IncidentClass("LocalJammerDevice", "Jammer",  ["172.16.52.4", "172.16.41.50", "172.16.52.3", "172.16.52.2"], "AGV2.5.0"))
 
-    incidents.append(IncidentClass("NodeCaptureAttack", "WirelessDoS",  ["172.16.40.24", "172.16.40.25", "172.16.52.2"], None))
+    #incidents.append(IncidentClass("NodeCaptureAttack", "WirelessDoS",  ["172.16.40.24", "172.16.40.25", "172.16.52.2"], None))
 
     for incident_obj in incidents:
         incident_obj.update_recoverability_factor_for_incident()
